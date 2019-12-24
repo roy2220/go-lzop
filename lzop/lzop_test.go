@@ -92,6 +92,7 @@ func testData(input []byte, buff *bytes.Buffer) {
 }
 
 func TestRandomDataSizes(t *testing.T) {
+	testData(getData(0), nil)
 	testData(getData(256), nil)
 	testData(getData(512), nil)
 	testData(getData(1024), nil)

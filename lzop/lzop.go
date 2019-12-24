@@ -55,28 +55,15 @@ func WriteHeader(buff *bytes.Buffer, fileTime int64, fileName string) error {
 func WriteBytes(buff *bytes.Buffer, data []byte, compressionFunction func([]byte) []byte) error {
 	blockSize := 256 * 1024
 
-	if len(data) < blockSize {
-		blockSize = len(data)
-	}
+	for i, n := 0, len(data); i < n; i += blockSize {
+		j := i + blockSize
 
-	iterations := len(data) / blockSize
-	for i := 0; i < iterations+1; i++ {
-
-		var compressed []byte
-		var unCompressed []byte
-
-		leftOver := len(data) - (i * blockSize)
-		if leftOver < blockSize {
-			unCompressed = data[(i * blockSize):]
-		} else {
-			unCompressed = data[(i * blockSize):((i + 1) * blockSize)]
+		if j > n {
+			j = n
 		}
 
-		if len(unCompressed) == 0 {
-			continue
-		}
-
-		compressed = compressionFunction(unCompressed)
+		unCompressed := data[i:j]
+		compressed := compressionFunction(unCompressed)
 
 		// did you actually compress anything?
 		//this is to stop the compression library from sticking in extra
